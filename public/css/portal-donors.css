@@ -1,0 +1,114 @@
+[data-page="donors"] .stage {
+  background:
+    radial-gradient(900px 420px at 100% 0%, rgba(255, 172, 0, 0.08), transparent 46%),
+    #f3eee3;
+}
+
+.donors-card {
+  max-width: none;
+}
+
+.settings-field select {
+  width: 100%;
+  height: 54px;
+  border: 1px solid var(--line);
+  background: #fffef9;
+  color: var(--ink);
+  padding: 0 0.95rem;
+  font: inherit;
+  outline: none;
+}
+
+.settings-field select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(255, 172, 0, 0.16);
+}
+
+.donors-table-wrap {
+  overflow-x: auto;
+}
+
+.donors-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.donors-table th,
+.donors-table td {
+  padding: 0.85rem 0.7rem;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.donors-table th {
+  color: var(--muted);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.donors-table td span {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+.donors-table a {
+  color: var(--navy);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+}
+
+.donors-pager {
+  margin-top: 1.2rem;
+}
+
+.donors-check {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
+.donors-destroy {
+  margin-top: 1.4rem;
+}
+
+.overview-empty {
+  display: grid;
+  place-items: center;
+  min-height: 180px;
+  text-align: center;
+  border: 1px dashed rgba(0, 32, 176, 0.18);
+  background: #fffef9;
+}
+
+.overview-empty strong {
+  display: block;
+  margin: 0.35rem 0 0.2rem;
+  font-size: 1.15rem;
+}
+
+.overview-empty span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.case-map {
+  margin-top: 1.2rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #fffef9;
+}
+
+.case-map iframe {
+  display: block;
+  width: 100%;
+  min-height: 240px;
+  border: 0;
+}
