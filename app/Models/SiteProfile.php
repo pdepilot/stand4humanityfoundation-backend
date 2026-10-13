@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Storage;
     'instagram_url',
     'youtube_url',
     'linkedin_url',
+    'impact_video_url',
+    'impact_video_caption',
     'weekday_label',
     'weekday_hours',
     'saturday_label',
@@ -111,6 +113,74 @@ class SiteProfile extends Model
         return $images;
     }
 
+    /**
+     * The sentence beside the play button on every public page that shows it.
+     */
+    public function impactVideoCaption(): string
+    {
+        $caption = trim((string) $this->impact_video_caption);
+
+        if ($caption === '') {
+            return 'We stand with those who cannot stand alone — protecting children, supporting survivors, and helping people in need.';
+        }
+
+        return $caption;
+    }
+
+    /**
+     * An embed address that plays inside the site, or null when no YouTube video is set.
+     */
+    public function impactVideoEmbedUrl(): ?string
+    {
+        $videoId = self::youtubeVideoId($this->impact_video_url);
+
+        if ($videoId === null) {
+            return null;
+        }
+
+        return 'https://www.youtube.com/embed/'.$videoId;
+    }
+
+    public static function youtubeVideoId(?string $url): ?string
+    {
+        if (! is_string($url) || trim($url) === '') {
+            return null;
+        }
+
+        $parts = parse_url(trim($url));
+
+        if (! is_array($parts) || ! isset($parts['host'])) {
+            return null;
+        }
+
+        $host = strtolower((string) $parts['host']);
+
+        if (str_starts_with($host, 'www.')) {
+            $host = substr($host, 4);
+        }
+
+        if (! in_array($host, ['youtube.com', 'm.youtube.com', 'youtu.be', 'youtube-nocookie.com'], true)) {
+            return null;
+        }
+
+        if ($host === 'youtu.be') {
+            $videoId = explode('/', trim((string) ($parts['path'] ?? ''), '/'))[0] ?? '';
+
+            return self::validYoutubeId($videoId);
+        }
+
+        $path = (string) ($parts['path'] ?? '');
+
+        if (preg_match('#/(?:embed|shorts|live)/([A-Za-z0-9_-]{11})#', $path, $matches) === 1) {
+            return $matches[1];
+        }
+
+        parse_str((string) ($parts['query'] ?? ''), $query);
+        $videoId = $query['v'] ?? null;
+
+        return is_string($videoId) ? self::validYoutubeId($videoId) : null;
+    }
+
     public function imageUrl(?string $path, string $fallback): string
     {
         if (! is_string($path) || $path === '') {
@@ -125,6 +195,15 @@ class SiteProfile extends Model
         $disk = Storage::disk('public');
 
         return $disk->url($path);
+    }
+
+    private static function validYoutubeId(string $videoId): ?string
+    {
+        if (preg_match('/^[A-Za-z0-9_-]{11}$/', $videoId) !== 1) {
+            return null;
+        }
+
+        return $videoId;
     }
 
     /**

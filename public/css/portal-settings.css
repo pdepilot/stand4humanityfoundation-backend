@@ -103,6 +103,10 @@
   align-items: start;
 }
 
+.settings-phone {
+  margin-top: 1.25rem;
+}
+
 .settings-identity,
 .settings-card {
   min-height: 100%;

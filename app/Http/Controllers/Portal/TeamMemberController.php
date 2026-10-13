@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Portal;
 use App\Actions\StoreTeamMemberPhotoAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Portal\StoreTeamMemberRequest;
+use App\Http\Requests\Portal\UpdateTeamMemberRequest;
 use App\Models\TeamMember;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -70,6 +71,43 @@ class TeamMemberController extends Controller
             'user' => $request->user(),
             'teamMember' => $teamMember,
         ]);
+    }
+
+    /**
+     * Show the form for changing a team member.
+     */
+    public function edit(Request $request, TeamMember $teamMember): View
+    {
+        Gate::authorize('update', $teamMember);
+
+        return view('portal.team.edit', [
+            'user' => $request->user(),
+            'teamMember' => $teamMember,
+        ]);
+    }
+
+    /**
+     * Save a team member's name, position, links, and an optional new portrait.
+     */
+    public function update(
+        UpdateTeamMemberRequest $request,
+        TeamMember $teamMember,
+        StoreTeamMemberPhotoAction $storePhoto,
+    ): RedirectResponse {
+        $details = $request->teamMemberDetails();
+        $upload = $request->uploadedPhoto();
+
+        if ($upload !== null) {
+            $previous = $teamMember->photo;
+            $details['photo'] = $storePhoto->store($upload);
+            $storePhoto->delete($previous);
+        }
+
+        $teamMember->update($details);
+
+        return redirect()
+            ->route('portal.team.show', $teamMember)
+            ->with('status', 'The team member was updated.');
     }
 
     /**

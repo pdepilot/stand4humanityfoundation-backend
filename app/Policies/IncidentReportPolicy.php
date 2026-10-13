@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\IncidentReport;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class IncidentReportPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Cases);
     }
 
     /**
@@ -20,7 +21,7 @@ class IncidentReportPolicy
      */
     public function view(User $user, IncidentReport $incidentReport): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Cases);
     }
 
     /**
@@ -28,7 +29,7 @@ class IncidentReportPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Cases);
     }
 
     /**
@@ -36,7 +37,7 @@ class IncidentReportPolicy
      */
     public function update(User $user, IncidentReport $incidentReport): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Cases);
     }
 
     /**
@@ -44,6 +45,6 @@ class IncidentReportPolicy
      */
     public function delete(User $user, IncidentReport $incidentReport): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Cases);
     }
 }

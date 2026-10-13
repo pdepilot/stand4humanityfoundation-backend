@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\DonationSetting;
 use App\Models\User;
 
@@ -12,6 +13,6 @@ class DonationSettingPolicy
      */
     public function update(User $user, DonationSetting $donationSetting): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Donors);
     }
 }

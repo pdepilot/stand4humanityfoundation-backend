@@ -13,7 +13,7 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <script type="application/ld+json">
-    {"@@context":"https://schema.org","@@type":"NGO","name":"Stand For Humanity Foundation","url":"https://www.standforhumanityfoundation.org/","email":"info@standforhumanityfoundation.org","telephone":"+234-800-723-3248","address":{"@@type":"PostalAddress","addressLocality":"Owerri","addressRegion":"Imo State","addressCountry":"NG"},"description":"A humanitarian organization committed to protecting vulnerable people, giving voice to the voiceless, and providing support to individuals and families facing difficult circumstances."}
+    {"@@context":"https://schema.org","@@type":"NGO","name":"Stand For Humanity Foundation","url":"https://www.standforhumanityfoundation.org/","email":"info@standforhumanityfoundation.org","telephone":{{ \Illuminate\Support\Js::from($siteProfile->phone) }},"address":{"@@type":"PostalAddress","addressLocality":"Owerri","addressRegion":"Imo State","addressCountry":"NG"},"description":"A humanitarian organization committed to protecting vulnerable people, giving voice to the voiceless, and providing support to individuals and families facing difficult circumstances."}
     </script>
 
     <!-- Favicon -->
@@ -103,6 +103,10 @@
                                 <a href="{{ route('report') }}" class="dropdown-item">
                                     <strong>Report Live</strong>
                                     <span>File an urgent case now</span>
+                                </a>
+                                <a href="{{ route('gallery') }}" class="dropdown-item">
+                                    <strong>Gallery</strong>
+                                    <span>Photographs and videos from our work</span>
                                 </a>
                                 <a href="{{ route('help') }}" class="dropdown-item">
                                     <strong>Get Help</strong>
@@ -209,11 +213,8 @@
             <div class="row g-0">
                 <div class="col-lg-11">
                     <div class="h-100 py-5 d-flex align-items-center">
-                        <button type="button" class="btn-play" data-bs-toggle="modal"
-                            data-src="https://www.youtube.com/embed/DWRcNpR6Kdc" data-bs-target="#videoModal">
-                            <span></span>
-                        </button>
-                        <h3 class="ms-5 mb-0">We stand with those who cannot stand alone — protecting children, supporting survivors, and helping people in need.</h3>
+                        @include('site.partials.impact-video-button')
+                        <h3 class="ms-5 mb-0">{{ $siteProfile->impactVideoCaption() }}</h3>
                     </div>
                 </div>
                 <div class="d-none d-lg-block col-lg-1">
@@ -283,6 +284,43 @@
         </div>
     </div>
     <!-- About End -->
+
+
+    <!-- Registration Start -->
+    <div class="container-fluid py-5">
+        <div class="container">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.2s">
+                    <button class="border-0 bg-transparent p-0 w-100" type="button" data-bs-toggle="modal" data-bs-target="#cacCertificateModal" aria-label="View the certificate of incorporation">
+                        <img class="img-fluid w-100 shadow-sm" src="{{ asset('images/cac-certificate.jpg') }}" alt="Certificate of Incorporation of Stand For Humanity Foundation, registration number 8133753" loading="lazy">
+                    </button>
+                    <p class="text-center text-dark mt-3 mb-0">Click the certificate to view it larger.</p>
+                </div>
+                <div class="col-lg-7">
+                    <p class="section-title bg-white text-start text-primary pe-3">Registered</p>
+                    <h2 class="display-6 mb-4 wow fadeIn" data-wow-delay="0.2s">Incorporated with the Corporate Affairs Commission</h2>
+                    <p class="mb-4 wow fadeIn" data-wow-delay="0.3s">Stand For Humanity Foundation is a registered corporate body in the Federal Republic of Nigeria. The certificate of incorporation is issued by the Corporate Affairs Commission.</p>
+                    <p class="text-dark wow fadeIn" data-wow-delay="0.4s"><i class="fa fa-check text-primary me-2"></i>Registration number 8133753</p>
+                    <p class="text-dark wow fadeIn" data-wow-delay="0.5s"><i class="fa fa-check text-primary me-2"></i>Incorporated in Abuja on 13 December 2024</p>
+                    <p class="text-dark mb-0 wow fadeIn" data-wow-delay="0.6s"><i class="fa fa-check text-primary me-2"></i>Tax identification number 32601482-0001</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="cacCertificateModal" tabindex="-1" aria-labelledby="cacCertificateTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cacCertificateTitle">Certificate of Incorporation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-2">
+                    <img class="img-fluid w-100" src="{{ asset('images/cac-certificate.jpg') }}" alt="Certificate of Incorporation of Stand For Humanity Foundation, registration number 8133753">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Registration End -->
 
 
     <!-- Features Start -->
@@ -618,7 +656,7 @@
     <script src="{{ asset('Charitize/lib/counterup/counterup.min.js') }}"></script>
 
     <!-- Template Javascript -->
-    <script src="{{ asset('Charitize/js/main.js') }}?v=nav-more"></script>
+    <script src="{{ asset('Charitize/js/main.js') }}?v=impact-video"></script>
     <script src="{{ asset('Charitize/js/cookie-banner.js') }}" defer></script>
     <script src="{{ asset('Charitize/js/donate-capture.js') }}?v=live-1"></script>
     <script src="{{ asset('Charitize/js/testimony-capture.js') }}?v=reveal"></script>

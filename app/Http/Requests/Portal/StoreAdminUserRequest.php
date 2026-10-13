@@ -19,6 +19,13 @@ class StoreAdminUserRequest extends FormRequest
         return $this->user()?->can('create', User::class) ?? false;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'admin_role_id' => $this->filled('admin_role_id') ? $this->input('admin_role_id') : null,
+        ]);
+    }
+
     /**
      * @return array<string, ValidationRule|array<int, mixed>|string>
      */
@@ -28,6 +35,7 @@ class StoreAdminUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
             'password' => ['required', 'string', Password::defaults(), 'confirmed'],
+            'admin_role_id' => ['nullable', 'integer', Rule::exists('admin_roles', 'id')],
         ];
     }
 
@@ -43,6 +51,7 @@ class StoreAdminUserRequest extends FormRequest
             'email.unique' => 'That email is already in use.',
             'password.required' => 'Enter a password.',
             'password.confirmed' => 'The password confirmation does not match.',
+            'admin_role_id.exists' => 'Choose a role from the list.',
         ];
     }
 
@@ -52,7 +61,7 @@ class StoreAdminUserRequest extends FormRequest
     public function administratorDetails(): array
     {
         return [
-            ...$this->safe()->only(['name', 'email', 'password']),
+            ...$this->safe()->only(['name', 'email', 'password', 'admin_role_id']),
             'role' => UserRole::Administrator,
             'email_verified_at' => now(),
         ];

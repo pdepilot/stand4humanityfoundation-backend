@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\Donation;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class DonationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Donors);
     }
 
     /**
@@ -20,7 +21,7 @@ class DonationPolicy
      */
     public function view(User $user, Donation $donation): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Donors);
     }
 
     /**
@@ -28,7 +29,7 @@ class DonationPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Donors);
     }
 
     /**
@@ -36,6 +37,6 @@ class DonationPolicy
      */
     public function delete(User $user, Donation $donation): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Donors);
     }
 }

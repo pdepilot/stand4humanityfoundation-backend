@@ -44,10 +44,18 @@
                 </div>
                 <div class="metric-rail overview-metrics">
                     <article class="metric"><span class="label">Staff</span><span class="value" data-count="{{ $staffCount }}">0</span><span class="delta">{{ $user->role->label() }}</span></article>
-                    <a class="metric" href="{{ route('portal.donors.index') }}"><span class="label">Donors</span><span class="value" data-count="{{ $donorCount }}">0</span><span class="delta">{{ $donorCount === 1 ? 'Gift on the ledger' : 'Open the ledger' }}</span></a>
-                    <a class="metric" href="{{ route('portal.cases.index') }}"><span class="label">Cases</span><span class="value" data-count="{{ $caseCount }}">0</span><span class="delta">Report Live</span></a>
-                    <a class="metric" href="{{ route('portal.contacts.index') }}"><span class="label">Contact</span><span class="value" data-count="{{ $contactCount }}">0</span><span class="delta">Contact desk</span></a>
-                    <a class="metric" href="{{ route('portal.news.index') }}"><span class="label">Notes</span><span class="value" data-count="{{ $newsCount }}">0</span><span class="delta">Programme journal</span></a>
+                    @if ($user->canOpenPortal(\App\Enums\PortalPermission::Donors))
+                        <a class="metric" href="{{ route('portal.donors.index') }}"><span class="label">Donors</span><span class="value" data-count="{{ $donorCount }}">0</span><span class="delta">{{ $donorCount === 1 ? 'Gift on the ledger' : 'Open the ledger' }}</span></a>
+                    @endif
+                    @if ($user->canOpenPortal(\App\Enums\PortalPermission::Cases))
+                        <a class="metric" href="{{ route('portal.cases.index') }}"><span class="label">Cases</span><span class="value" data-count="{{ $caseCount }}">0</span><span class="delta">Report Live</span></a>
+                    @endif
+                    @if ($user->canOpenPortal(\App\Enums\PortalPermission::Contacts))
+                        <a class="metric" href="{{ route('portal.contacts.index') }}"><span class="label">Contact</span><span class="value" data-count="{{ $contactCount }}">0</span><span class="delta">Contact desk</span></a>
+                    @endif
+                    @if ($user->canOpenPortal(\App\Enums\PortalPermission::News))
+                        <a class="metric" href="{{ route('portal.news.index') }}"><span class="label">Notes</span><span class="value" data-count="{{ $newsCount }}">0</span><span class="delta">Programme journal</span></a>
+                    @endif
                     <article class="metric"><span class="label">Goal</span><span class="value">&#8358;{{ $donationProgress->formattedGoal() }}</span><span class="delta">{{ $donationProgress->percent }}% raised</span></article>
                     <article class="metric"><span class="label">Desk</span><span class="value">Open</span><span class="delta">Owerri</span></article>
                 </div>
@@ -76,8 +84,9 @@
                     @if (session('status'))
                         <p class="goal-status" role="status">{{ session('status') }}</p>
                     @endif
-                    @if ($errors->any())
-                        <p class="goal-alert" role="alert">{{ $errors->first() }}</p>
+                    @php($goalError = collect($errors->keys())->first(fn (string $key): bool => ! str_starts_with($key, 'gallery_')))
+                    @if (is_string($goalError))
+                        <p class="goal-alert" role="alert">{{ $errors->first($goalError) }}</p>
                     @endif
                     <div class="goal-desk-grid">
                         <div class="goal-causes">
@@ -102,7 +111,7 @@
                                 <p>Total in bank: &#8358;{{ $donationProgress->formattedBank() }}</p>
                             </div>
                         </div>
-                        @if ($user->isAdministrator())
+                        @if ($user->canOpenPortal(\App\Enums\PortalPermission::Donors))
                             <form method="POST" action="{{ route('portal.donation-goal.update') }}" class="goal-form" novalidate>
                                 @csrf
                                 @method('PUT')
@@ -121,6 +130,38 @@
                         @endif
                     </div>
                 </div>
+                @if ($user->canOpenPortal(\App\Enums\PortalPermission::Site))
+                    <div class="surface goal-desk" data-stamp="Footer">
+                        <div class="panel-title">
+                            <div>
+                                <h2>Footer pictures</h2>
+                                <p>Replace a picture in the public footer. A blank field keeps the current picture. JPG, PNG, or WEBP, up to 5 MB.</p>
+                            </div>
+                        </div>
+                        @if (session('gallery_status'))
+                            <p class="goal-status" role="status">{{ session('gallery_status') }}</p>
+                        @endif
+                        @php($galleryError = collect($errors->keys())->first(fn (string $key): bool => str_starts_with($key, 'gallery_')))
+                        @if (is_string($galleryError))
+                            <p class="goal-alert" role="alert">{{ $errors->first($galleryError) }}</p>
+                        @endif
+                        <form method="POST" action="{{ route('portal.site.gallery') }}" class="goal-form" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+                            <div class="footer-gallery">
+                                @foreach ($siteProfile->gallery() as $index => $image)
+                                    @php($slot = $index + 1)
+                                    <div class="goal-field">
+                                        <label for="gallery_{{ $slot }}">Footer picture {{ $slot }}</label>
+                                        <img src="{{ $image['url'] }}" alt="{{ $image['alt'] }}">
+                                        <input id="gallery_{{ $slot }}" name="gallery_{{ $slot }}" type="file" accept="image/jpeg,image/png,image/webp">
+                                    </div>
+                                @endforeach
+                            </div>
+                            <button class="solid-btn" type="submit">Save footer pictures</button>
+                        </form>
+                    </div>
+                @endif
                 <div class="split">
                     <div class="split-stack">
                         <div class="surface" data-stamp="Tickets">
@@ -180,6 +221,7 @@
                                 </div>
                                 <div class="go">Open wing</div>
                             </a>
+                            @if ($user->canOpenPortal(\App\Enums\PortalPermission::Cases))
                             <a class="cell" href="{{ route('portal.cases.index') }}">
                                 <div>
                                     <div class="tag">Rescue</div>
@@ -188,6 +230,8 @@
                                 </div>
                                 <div class="go">Open wing</div>
                             </a>
+                            @endif
+                            @if ($user->canOpenPortal(\App\Enums\PortalPermission::Contacts))
                             <a class="cell" href="{{ route('portal.contacts.index') }}">
                                 <div>
                                     <div class="tag">Contact</div>
@@ -196,6 +240,8 @@
                                 </div>
                                 <div class="go">Open wing</div>
                             </a>
+                            @endif
+                            @if ($user->canOpenPortal(\App\Enums\PortalPermission::Volunteers))
                             <a class="cell" href="{{ route('portal.volunteers.index') }}">
                                 <div>
                                     <div class="tag">Volunteer</div>
@@ -204,6 +250,8 @@
                                 </div>
                                 <div class="go">Open desk</div>
                             </a>
+                            @endif
+                            @if ($user->canOpenPortal(\App\Enums\PortalPermission::News))
                             <a class="cell" href="{{ route('portal.news.index') }}">
                                 <div>
                                     <div class="tag">Journal</div>
@@ -212,7 +260,8 @@
                                 </div>
                                 <div class="go">Open news</div>
                             </a>
-                            @if ($user->isAdministrator())
+                            @endif
+                            @if ($user->canOpenPortal(\App\Enums\PortalPermission::Members))
                                 <a class="cell" href="{{ route('portal.members.index') }}">
                                     <div>
                                         <div class="tag">Roll</div>
@@ -221,6 +270,8 @@
                                     </div>
                                     <div class="go">Open roll</div>
                                 </a>
+                            @endif
+                            @if ($user->canOpenPortal(\App\Enums\PortalPermission::Team))
                                 <a class="cell" href="{{ route('portal.team.index') }}">
                                     <div>
                                         <div class="tag">Team</div>
@@ -229,6 +280,18 @@
                                     </div>
                                     <div class="go">Open team</div>
                                 </a>
+                            @endif
+                            @if ($user->canOpenPortal(\App\Enums\PortalPermission::Gallery))
+                                <a class="cell" href="{{ route('portal.gallery.index') }}">
+                                    <div>
+                                        <div class="tag">Gallery</div>
+                                        <h3>Pictures and videos</h3>
+                                        <p>{{ $galleryCount }} {{ \Illuminate\Support\Str::plural('item', $galleryCount) }} on the public gallery.</p>
+                                    </div>
+                                    <div class="go">Open gallery</div>
+                                </a>
+                            @endif
+                            @if ($user->canOpenPortal(\App\Enums\PortalPermission::Testimonies))
                                 <a class="cell" href="{{ route('portal.testimonies.index') }}">
                                     <div>
                                         <div class="tag">Voices</div>
@@ -238,6 +301,7 @@
                                     <div class="go">Open review</div>
                                 </a>
                             @endif
+                            @if ($user->canOpenPortal(\App\Enums\PortalPermission::Events))
                             <a class="cell" href="{{ route('portal.events.index') }}">
                                 <div>
                                     <div class="tag">Calendar</div>
@@ -246,6 +310,8 @@
                                 </div>
                                 <div class="go">Open events</div>
                             </a>
+                            @endif
+                            @if ($user->canOpenPortal(\App\Enums\PortalPermission::Subscribers))
                             <a class="cell" href="{{ route('portal.subscribers.index') }}">
                                 <div>
                                     <div class="tag">Subscriber</div>
@@ -254,6 +320,7 @@
                                 </div>
                                 <div class="go">Open list</div>
                             </a>
+                            @endif
                         </div>
                     </div>
                 </div>

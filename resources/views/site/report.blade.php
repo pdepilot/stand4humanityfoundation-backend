@@ -102,6 +102,10 @@
                                     <strong>Report Live</strong>
                                     <span>File an urgent case now</span>
                                 </a>
+                                <a href="{{ route('gallery') }}" class="dropdown-item">
+                                    <strong>Gallery</strong>
+                                    <span>Photographs and videos from our work</span>
+                                </a>
                                 <a href="{{ route('help') }}" class="dropdown-item">
                                     <strong>Get Help</strong>
                                     <span>Reach the desk when you need us</span>
@@ -180,7 +184,7 @@
                     </div>
                     <div>
                         <h4 class="text-primary mb-2">Emergency Notice</h4>
-                        <p class="mb-0">Emergency situations involving kidnapping, child trafficking, life-threatening violence, or immediate danger should also be reported directly to security agencies while submitting this form. Call Nigeria Emergency Services and our hotline <strong class="text-primary">+234 800 723 3248</strong>.</p>
+                        <p class="mb-0">Emergency situations involving kidnapping, child trafficking, life-threatening violence, or immediate danger should also be reported directly to security agencies while submitting this form. Call Nigeria Emergency Services and our hotline <strong class="text-primary">{{ $siteProfile->phone }}</strong>.</p>
                     </div>
                 </div>
             </div>
@@ -612,9 +616,9 @@
                             <i class="fa fa-shield-halved fa-2x text-dark"></i>
                         </div>
                         <h3>Report Desk</h3>
-                        <p class="mb-1"><i class="fa fa-phone text-primary me-2"></i>+234 800 723 3248</p>
+                        <p class="mb-1"><i class="fa fa-phone text-primary me-2"></i>{{ $siteProfile->phone }}</p>
                         <p class="mb-1"><i class="fa fa-envelope text-primary me-2"></i>info@standforhumanityfoundation.org</p>
-                        <p class="mb-1"><i class="fab fa-whatsapp text-primary me-2"></i>+234 800 723 3248</p>
+                        <p class="mb-1"><i class="fab fa-whatsapp text-primary me-2"></i>{{ $siteProfile->phone }}</p>
                         <p class="mb-0"><i class="fa fa-map-marker-alt text-primary me-2"></i>Owerri, Imo State, Nigeria</p>
                     </div>
                 </div>
@@ -624,9 +628,9 @@
                             <i class="fa fa-truck-medical fa-2x text-dark"></i>
                         </div>
                         <h3>Emergency Response Team</h3>
-                        <p class="mb-1"><i class="fa fa-phone text-primary me-2"></i>+234 800 723 3248</p>
+                        <p class="mb-1"><i class="fa fa-phone text-primary me-2"></i>{{ $siteProfile->phone }}</p>
                         <p class="mb-1"><i class="fa fa-envelope text-primary me-2"></i>info@standforhumanityfoundation.org</p>
-                        <p class="mb-1"><i class="fab fa-whatsapp text-primary me-2"></i>+234 800 723 3248</p>
+                        <p class="mb-1"><i class="fab fa-whatsapp text-primary me-2"></i>{{ $siteProfile->phone }}</p>
                         <p class="mb-0"><i class="fa fa-map-marker-alt text-primary me-2"></i>Owerri, Imo State, Nigeria</p>
                     </div>
                 </div>
@@ -732,7 +736,7 @@
     <script src="{{ asset('Charitize/lib/counterup/counterup.min.js') }}"></script>
 
     <!-- Template Javascript -->
-    <script src="{{ asset('Charitize/js/main.js') }}?v=nav-more"></script>
+    <script src="{{ asset('Charitize/js/main.js') }}?v=impact-video"></script>
     <script src="{{ asset('Charitize/js/cookie-banner.js') }}" defer></script>
     <script src="{{ asset('Charitize/js/report-live.js') }}"></script>
 </body>

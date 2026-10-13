@@ -22,7 +22,10 @@ class TeamMemberControllerTest extends TestCase
     public function test_staff_cannot_manage_the_team(): void
     {
         $staff = User::factory()->create();
-        $teamMember = TeamMember::factory()->create();
+        $teamMember = TeamMember::factory()->create([
+            'name' => 'Ada Obi',
+            'role' => 'Programme lead',
+        ]);
 
         $this->actingAs($staff)
             ->get(route('portal.team.index'))
@@ -37,8 +40,18 @@ class TeamMemberControllerTest extends TestCase
             ->assertForbidden();
 
         $this->actingAs($staff)
+            ->put(route('portal.team.update', $teamMember), [
+                'name' => 'Changed Name',
+                'role' => 'Changed position',
+            ])
+            ->assertForbidden();
+
+        $this->actingAs($staff)
             ->delete(route('portal.team.destroy', $teamMember))
             ->assertForbidden();
+
+        $this->assertSame('Ada Obi', $teamMember->refresh()->name);
+        $this->assertSame('Programme lead', $teamMember->role);
 
         $this->assertModelExists($teamMember);
     }
@@ -101,7 +114,7 @@ class TeamMemberControllerTest extends TestCase
             ->assertRedirect(route('portal.team.create'))
             ->assertSessionHasErrors([
                 'name' => 'Enter the team member’s name.',
-                'role' => 'Enter their role.',
+                'role' => 'Enter their position.',
                 'photo' => 'Upload a portrait.',
             ]);
     }
@@ -144,5 +157,86 @@ class TeamMemberControllerTest extends TestCase
         $this->get(route('home'))
             ->assertDontSee("<script>alert('xss')</script>", false)
             ->assertSee('&lt;script&gt;', false);
+    }
+
+    public function test_administrator_can_edit_a_team_members_name_and_position(): void
+    {
+        $administrator = User::factory()->administrator()->create();
+        $teamMember = TeamMember::factory()->create([
+            'name' => 'Ada Obi',
+            'role' => 'Programme lead',
+            'photo' => 'Charitize/img/stand8.png',
+            'facebook_url' => 'https://facebook.com/ada',
+        ]);
+
+        $this->actingAs($administrator)
+            ->get(route('portal.team.edit', $teamMember))
+            ->assertOk()
+            ->assertSee('Ada Obi')
+            ->assertSee('Programme lead')
+            ->assertSee('Position');
+
+        $this->actingAs($administrator)
+            ->put(route('portal.team.update', $teamMember), [
+                'name' => 'Ngozi Ade',
+                'role' => 'Victim support lead',
+                'facebook_url' => '',
+            ])
+            ->assertRedirect(route('portal.team.show', $teamMember))
+            ->assertSessionHas('status', 'The team member was updated.');
+
+        $teamMember->refresh();
+
+        $this->assertSame('Ngozi Ade', $teamMember->name);
+        $this->assertSame('Victim support lead', $teamMember->role);
+        $this->assertSame('Charitize/img/stand8.png', $teamMember->photo);
+        $this->assertNull($teamMember->facebook_url);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('Ngozi Ade')
+            ->assertSee('Victim support lead')
+            ->assertDontSee('Ada Obi')
+            ->assertDontSee('Programme lead');
+    }
+
+    public function test_a_new_portrait_replaces_the_uploaded_picture(): void
+    {
+        $disk = Storage::fake('public');
+        $administrator = User::factory()->administrator()->create();
+        $teamMember = TeamMember::factory()->create([
+            'name' => 'Ada Obi',
+            'photo' => 'team/ada.jpg',
+        ]);
+        $disk->put('team/ada.jpg', 'portrait');
+
+        $this->actingAs($administrator)
+            ->put(route('portal.team.update', $teamMember), [
+                'name' => 'Ada Obi',
+                'role' => 'Programme lead',
+                'photo' => UploadedFile::fake()->image('new.jpg'),
+            ])
+            ->assertRedirect(route('portal.team.show', $teamMember));
+
+        $teamMember->refresh();
+
+        $this->assertNotSame('team/ada.jpg', $teamMember->photo);
+        $disk->assertMissing('team/ada.jpg');
+        $disk->assertExists($teamMember->photo);
+    }
+
+    public function test_an_empty_edit_is_rejected(): void
+    {
+        $administrator = User::factory()->administrator()->create();
+        $teamMember = TeamMember::factory()->create();
+
+        $this->actingAs($administrator)
+            ->from(route('portal.team.edit', $teamMember))
+            ->put(route('portal.team.update', $teamMember), [])
+            ->assertRedirect(route('portal.team.edit', $teamMember))
+            ->assertSessionHasErrors([
+                'name' => 'Enter the team member’s name.',
+                'role' => 'Enter their position.',
+            ]);
     }
 }

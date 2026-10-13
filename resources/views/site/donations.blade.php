@@ -106,6 +106,10 @@
                                     <strong>Give Now</strong>
                                     <span>Support child protection and victim care</span>
                                 </a>
+                                <a href="{{ route('gallery') }}" class="dropdown-item">
+                                    <strong>Gallery</strong>
+                                    <span>Photographs and videos from our work</span>
+                                </a>
                                 <a href="{{ route('help') }}" class="dropdown-item">
                                     <strong>Get Help</strong>
                                     <span>Reach the desk when you need us</span>
@@ -306,7 +310,7 @@
     <script src="{{ asset('Charitize/lib/counterup/counterup.min.js') }}"></script>
 
     <!-- Template Javascript -->
-    <script src="{{ asset('Charitize/js/main.js') }}?v=nav-more"></script>
+    <script src="{{ asset('Charitize/js/main.js') }}?v=impact-video"></script>
     <script src="{{ asset('Charitize/js/cookie-banner.js') }}" defer></script>
     <script src="{{ asset('Charitize/js/donations.js') }}?v=live-1"></script>
 </body>

@@ -29,7 +29,7 @@
                     <div>
                         <p class="eyebrow">Command · Public site</p>
                         <h1 class="head-title">Site details</h1>
-                        <p class="head-copy">Office line, social links, response hours, and the footer gallery. A blank social link hides that icon.</p>
+                        <p class="head-copy">Office line, social links, the yellow-bar video, response hours, and the footer gallery. A blank social link hides that icon. The video and sentence appear on every public page that shows the play button.</p>
                     </div>
                 </div>
             </header>
@@ -58,6 +58,15 @@
                             <div class="settings-field">
                                 <label for="email">Email</label>
                                 <input id="email" name="email" type="email" value="{{ old('email', $profile->email) }}" required maxlength="120">
+                            </div>
+
+                            <div class="settings-field">
+                                <label for="impact_video_url">Yellow-bar video</label>
+                                <input id="impact_video_url" name="impact_video_url" type="url" value="{{ old('impact_video_url', $profile->impact_video_url) }}" placeholder="https://www.youtube.com/watch?v=" maxlength="255">
+                            </div>
+                            <div class="settings-field">
+                                <label for="impact_video_caption">Yellow-bar sentence</label>
+                                <input id="impact_video_caption" name="impact_video_caption" type="text" value="{{ old('impact_video_caption', $profile->impact_video_caption ?: $profile->impactVideoCaption()) }}" maxlength="240">
                             </div>
 
                             <div class="settings-field">

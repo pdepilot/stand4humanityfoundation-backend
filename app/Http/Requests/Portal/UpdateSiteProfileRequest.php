@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Portal;
 
 use App\Models\SiteProfile;
+use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
@@ -28,6 +29,8 @@ class UpdateSiteProfileRequest extends FormRequest
             'instagram_url' => $this->filled('instagram_url') ? $this->input('instagram_url') : null,
             'youtube_url' => $this->filled('youtube_url') ? $this->input('youtube_url') : null,
             'linkedin_url' => $this->filled('linkedin_url') ? $this->input('linkedin_url') : null,
+            'impact_video_url' => $this->filled('impact_video_url') ? $this->input('impact_video_url') : null,
+            'impact_video_caption' => $this->filled('impact_video_caption') ? $this->input('impact_video_caption') : null,
         ]);
     }
 
@@ -45,6 +48,12 @@ class UpdateSiteProfileRequest extends FormRequest
             'instagram_url' => ['nullable', 'url', 'max:255'],
             'youtube_url' => ['nullable', 'url', 'max:255'],
             'linkedin_url' => ['nullable', 'url', 'max:255'],
+            'impact_video_url' => ['nullable', 'bail', 'url', 'max:255', function (string $attribute, mixed $value, Closure $fail): void {
+                if (! is_string($value) || SiteProfile::youtubeVideoId($value) === null) {
+                    $fail('Paste a YouTube link, such as https://www.youtube.com/watch?v=.');
+                }
+            }],
+            'impact_video_caption' => ['nullable', 'string', 'max:240'],
             'weekday_label' => ['required', 'string', 'max:80'],
             'weekday_hours' => ['required', 'string', 'max:80'],
             'saturday_label' => ['required', 'string', 'max:80'],
@@ -74,6 +83,9 @@ class UpdateSiteProfileRequest extends FormRequest
             'facebook_url.url' => 'Enter a full Facebook address, including https://.',
             'instagram_url.url' => 'Enter a full Instagram address, including https://.',
             'youtube_url.url' => 'Enter a full YouTube address, including https://.',
+            'impact_video_url.url' => 'Paste a YouTube link, such as https://www.youtube.com/watch?v=.',
+            'impact_video_url.max' => 'The YouTube link must be 255 characters or fewer.',
+            'impact_video_caption.max' => 'The banner sentence must be 240 characters or fewer.',
             'linkedin_url.url' => 'Enter a full LinkedIn address, including https://.',
             'weekday_label.required' => 'Enter the weekday heading.',
             'weekday_hours.required' => 'Enter the weekday hours.',
@@ -115,6 +127,8 @@ class UpdateSiteProfileRequest extends FormRequest
             'instagram_url',
             'youtube_url',
             'linkedin_url',
+            'impact_video_url',
+            'impact_video_caption',
             'weekday_label',
             'weekday_hours',
             'saturday_label',

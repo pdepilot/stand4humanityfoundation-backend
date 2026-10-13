@@ -30,7 +30,7 @@
                     <div>
                         <p class="eyebrow">Command · Super administrator</p>
                         <h1 class="head-title">Administrators</h1>
-                        <p class="head-copy">Add an administrator, suspend their access, or remove the account.</p>
+                        <p class="head-copy">Add an administrator, assign a role, suspend their access, or remove the account. A blank role leaves every administrator page open.</p>
                     </div>
                 </div>
             </header>
@@ -53,7 +53,7 @@
                                 <div class="news-ledger-row">
                                     <div class="news-ledger-copy">
                                         <strong>{{ $administrator->name }}</strong>
-                                        <span>{{ $administrator->email }} · {{ $administrator->role->label() }}</span>
+                                        <span>{{ $administrator->email }} · {{ $administrator->adminRole?->name ?? 'Every administrator page' }}</span>
                                     </div>
                                     <div class="news-ledger-meta">
                                         @if ($administrator->isSuperAdministrator())
@@ -64,6 +64,19 @@
                                             <span class="news-pill is-live">Active</span>
                                         @endif
                                     </div>
+                                    @if ($user->can('assignRole', $administrator))
+                                        <form method="POST" action="{{ route('portal.admins.role', $administrator) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <select name="admin_role_id" aria-label="Role for {{ $administrator->name }}">
+                                                <option value="">Every administrator page</option>
+                                                @foreach ($roles as $role)
+                                                    <option value="{{ $role->id }}" @selected((string) $administrator->admin_role_id === (string) $role->id)>{{ $role->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <button class="ghost-btn" type="submit">Assign role</button>
+                                        </form>
+                                    @endif
                                     @if ($user->can('suspend', $administrator))
                                         <form method="POST" action="{{ route('portal.admins.update', $administrator) }}">
                                             @csrf
@@ -110,6 +123,15 @@
                             <div class="settings-field">
                                 <label for="password_confirmation">Confirm password</label>
                                 <input id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password">
+                            </div>
+                            <div class="settings-field">
+                                <label for="admin_role_id">Role</label>
+                                <select id="admin_role_id" name="admin_role_id">
+                                    <option value="">Every administrator page</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}" @selected((string) old('admin_role_id') === (string) $role->id)>{{ $role->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <button class="settings-submit" type="submit">Add administrator</button>
                         </form>

@@ -16,6 +16,11 @@ class HomeControllerTest extends TestCase
             ->assertSee('Stand For Humanity Foundation')
             ->assertSee('Standing for Humanity. Protecting the Vulnerable.')
             ->assertSee('Owerri, Imo State')
+            ->assertSee('Registration number 8133753')
+            ->assertSee('13 December 2024')
+            ->assertSee('32601482-0001')
+            ->assertSee('images/cac-certificate.jpg', false)
+            ->assertSee('id="cacCertificateModal"', false)
             ->assertSee(route('about'), false)
             ->assertDontSee('Charitize/about.html', false);
     }

@@ -66,6 +66,88 @@ class SiteProfileControllerTest extends TestCase
             ->assertSee('desk@example.com');
     }
 
+    public function test_administrator_can_place_a_youtube_video_on_the_public_pages(): void
+    {
+        $administrator = User::factory()->administrator()->create();
+
+        $this->actingAs($administrator)
+            ->put(route('portal.site.update'), [
+                ...$this->validPayload(),
+                'impact_video_url' => 'https://www.youtube.com/watch?v=abcDEF12345',
+                'impact_video_caption' => 'Watch how the foundation stands with Owerri families.',
+            ])
+            ->assertRedirect(route('portal.site.edit'))
+            ->assertSessionHas('status', 'The public site details were updated.');
+
+        $profile = SiteProfile::query()->first();
+
+        $this->assertNotNull($profile);
+        $this->assertSame('https://www.youtube.com/watch?v=abcDEF12345', $profile->impact_video_url);
+        $this->assertSame('Watch how the foundation stands with Owerri families.', $profile->impact_video_caption);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('data-src="https://www.youtube.com/embed/abcDEF12345"', false)
+            ->assertSee('data-bs-target="#videoModal"', false)
+            ->assertSee('Watch how the foundation stands with Owerri families.')
+            ->assertDontSee('https://www.youtube.com/watch?v=abcDEF12345', false);
+
+        $this->get(route('about'))
+            ->assertOk()
+            ->assertSee('data-src="https://www.youtube.com/embed/abcDEF12345"', false)
+            ->assertSee('Watch how the foundation stands with Owerri families.');
+
+        $this->get(route('events'))
+            ->assertOk()
+            ->assertSee('data-src="https://www.youtube.com/embed/abcDEF12345"', false)
+            ->assertSee('Watch how the foundation stands with Owerri families.');
+    }
+
+    public function test_clearing_the_youtube_video_hides_the_play_button(): void
+    {
+        $administrator = User::factory()->administrator()->create();
+
+        $this->actingAs($administrator)
+            ->put(route('portal.site.update'), [
+                ...$this->validPayload(),
+                'impact_video_url' => 'https://youtu.be/abcDEF12345',
+            ])
+            ->assertRedirect(route('portal.site.edit'));
+
+        $this->actingAs($administrator)
+            ->put(route('portal.site.update'), $this->validPayload())
+            ->assertRedirect(route('portal.site.edit'));
+
+        $this->assertNull(SiteProfile::query()->value('impact_video_url'));
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('btn-play', false)
+            ->assertDontSee('youtube.com/embed', false);
+
+        $this->get(route('about'))
+            ->assertOk()
+            ->assertDontSee('btn-play', false);
+    }
+
+    public function test_a_non_youtube_address_is_rejected(): void
+    {
+        $administrator = User::factory()->administrator()->create();
+
+        $this->actingAs($administrator)
+            ->from(route('portal.site.edit'))
+            ->put(route('portal.site.update'), [
+                ...$this->validPayload(),
+                'impact_video_url' => 'https://example.com/watch?v=abcDEF12345',
+            ])
+            ->assertRedirect(route('portal.site.edit'))
+            ->assertSessionHasErrors([
+                'impact_video_url' => 'Paste a YouTube link, such as https://www.youtube.com/watch?v=.',
+            ]);
+
+        $this->assertNull(SiteProfile::query()->value('impact_video_url'));
+    }
+
     public function test_empty_payload_returns_the_required_messages(): void
     {
         $administrator = User::factory()->administrator()->create();

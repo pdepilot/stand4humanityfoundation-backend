@@ -50,7 +50,7 @@ class StoreTeamMemberRequest extends FormRequest
     {
         return [
             'name.required' => 'Enter the team member’s name.',
-            'role.required' => 'Enter their role.',
+            'role.required' => 'Enter their position.',
             'photo.required' => 'Upload a portrait.',
             'photo.image' => 'The portrait must be an image file.',
             'photo.mimes' => 'Upload a JPG, PNG, or WEBP portrait.',

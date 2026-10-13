@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\SiteProfile;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class SiteProfilePolicy
      */
     public function view(User $user, SiteProfile $siteProfile): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Site);
     }
 
     /**
@@ -20,6 +21,6 @@ class SiteProfilePolicy
      */
     public function update(User $user, SiteProfile $siteProfile): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Site);
     }
 }

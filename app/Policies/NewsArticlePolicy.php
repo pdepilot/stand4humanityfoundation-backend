@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\NewsArticle;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class NewsArticlePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::News);
     }
 
     /**
@@ -20,7 +21,7 @@ class NewsArticlePolicy
      */
     public function view(User $user, NewsArticle $newsArticle): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::News);
     }
 
     /**
@@ -28,7 +29,7 @@ class NewsArticlePolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::News);
     }
 
     /**
@@ -36,7 +37,7 @@ class NewsArticlePolicy
      */
     public function update(User $user, NewsArticle $newsArticle): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::News);
     }
 
     /**
@@ -44,6 +45,6 @@ class NewsArticlePolicy
      */
     public function delete(User $user, NewsArticle $newsArticle): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::News);
     }
 }

@@ -2,6 +2,9 @@
 
 namespace Tests\Feature\Http\Controllers\Portal;
 
+use App\Enums\PortalPermission;
+use App\Models\AdminRole;
+use App\Models\SiteProfile;
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -214,5 +217,78 @@ class SettingsControllerTest extends TestCase
 
         $this->assertNotSame('staff-new@example.com', $staff->email);
         $this->assertTrue(Hash::check('password', $staff->password));
+    }
+
+    public function test_administrator_can_change_the_public_phone_number_from_settings(): void
+    {
+        $administrator = User::factory()->administrator()->create();
+
+        $this->actingAs($administrator)
+            ->put(route('portal.settings.phone'), [
+                'phone' => '+234 803 000 0000',
+            ])
+            ->assertRedirectToRoute('portal.settings.edit')
+            ->assertSessionHas('phone_status', 'The public phone number was updated.');
+
+        $this->assertSame('+234 803 000 0000', SiteProfile::current()->phone);
+
+        $this->get(route('contact'))
+            ->assertOk()
+            ->assertSee('+234 803 000 0000');
+
+        $this->get(route('report'))
+            ->assertOk()
+            ->assertSee('+234 803 000 0000');
+    }
+
+    public function test_a_blank_phone_number_is_rejected(): void
+    {
+        $administrator = User::factory()->administrator()->create();
+
+        $this->actingAs($administrator)
+            ->from(route('portal.settings.edit'))
+            ->put(route('portal.settings.phone'), [
+                'phone' => '',
+            ])
+            ->assertRedirect(route('portal.settings.edit'))
+            ->assertSessionHasErrors([
+                'phone' => 'Enter the public phone number.',
+            ]);
+    }
+
+    public function test_the_public_phone_number_is_escaped(): void
+    {
+        $administrator = User::factory()->administrator()->create();
+
+        $this->actingAs($administrator)
+            ->put(route('portal.settings.phone'), [
+                'phone' => "<script>alert('xss')</script>",
+            ])
+            ->assertRedirectToRoute('portal.settings.edit');
+
+        $this->get(route('contact'))
+            ->assertOk()
+            ->assertDontSee("<script>alert('xss')</script>", false)
+            ->assertSee('&lt;script&gt;', false);
+    }
+
+    public function test_an_administrator_without_settings_access_cannot_change_the_phone_number(): void
+    {
+        $role = AdminRole::factory()->create([
+            'name' => 'News only',
+            'permissions' => [PortalPermission::News->value],
+        ]);
+        $administrator = User::factory()->administrator()->create([
+            'admin_role_id' => $role->id,
+        ]);
+
+        $this->actingAs($administrator)
+            ->put(route('portal.settings.phone'), [
+                'phone' => '+234 803 000 0000',
+            ])
+            ->assertForbidden()
+            ->assertSee(PortalPermission::DENIED_MESSAGE);
+
+        $this->assertNotSame('+234 803 000 0000', SiteProfile::current()->phone);
     }
 }

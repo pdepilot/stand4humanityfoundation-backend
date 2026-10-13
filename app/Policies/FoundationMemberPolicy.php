@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\FoundationMember;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class FoundationMemberPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Members);
     }
 
     /**
@@ -20,7 +21,7 @@ class FoundationMemberPolicy
      */
     public function view(User $user, FoundationMember $foundationMember): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Members);
     }
 
     /**
@@ -28,7 +29,7 @@ class FoundationMemberPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Members);
     }
 
     /**
@@ -36,7 +37,7 @@ class FoundationMemberPolicy
      */
     public function update(User $user, FoundationMember $foundationMember): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Members);
     }
 
     /**
@@ -44,7 +45,7 @@ class FoundationMemberPolicy
      */
     public function delete(User $user, FoundationMember $foundationMember): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Members);
     }
 
     /**
@@ -52,6 +53,6 @@ class FoundationMemberPolicy
      */
     public function suspend(User $user, FoundationMember $foundationMember): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Members);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\FoundationEvent;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class FoundationEventPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Events);
     }
 
     /**
@@ -20,7 +21,7 @@ class FoundationEventPolicy
      */
     public function view(User $user, FoundationEvent $foundationEvent): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Events);
     }
 
     /**
@@ -28,7 +29,7 @@ class FoundationEventPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Events);
     }
 
     /**
@@ -36,7 +37,7 @@ class FoundationEventPolicy
      */
     public function update(User $user, FoundationEvent $foundationEvent): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Events);
     }
 
     /**
@@ -44,6 +45,6 @@ class FoundationEventPolicy
      */
     public function delete(User $user, FoundationEvent $foundationEvent): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Events);
     }
 }

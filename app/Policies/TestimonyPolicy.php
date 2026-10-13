@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\Testimony;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class TestimonyPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Testimonies);
     }
 
     /**
@@ -20,7 +21,7 @@ class TestimonyPolicy
      */
     public function view(User $user, Testimony $testimony): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Testimonies);
     }
 
     /**
@@ -28,7 +29,7 @@ class TestimonyPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Testimonies);
     }
 
     /**
@@ -36,7 +37,7 @@ class TestimonyPolicy
      */
     public function update(User $user, Testimony $testimony): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Testimonies);
     }
 
     /**
@@ -44,6 +45,6 @@ class TestimonyPolicy
      */
     public function delete(User $user, Testimony $testimony): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Testimonies);
     }
 }

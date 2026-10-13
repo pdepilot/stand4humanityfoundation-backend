@@ -90,17 +90,21 @@
     $(document).ready(function () {
         var $videoSrc;
         $('.btn-play').click(function () {
-            $videoSrc = $(this).data("src");
+            $videoSrc = $(this).attr("data-src");
         });
-        console.log($videoSrc);
 
-        $('#videoModal').on('shown.bs.modal', function (e) {
-            $("#video").attr('src', $videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0");
-        })
+        $('#videoModal').on('shown.bs.modal', function () {
+            if (!$videoSrc) {
+                return;
+            }
 
-        $('#videoModal').on('hide.bs.modal', function (e) {
-            $("#video").attr('src', $videoSrc);
-        })
+            var joiner = $videoSrc.indexOf("?") === -1 ? "?" : "&";
+            $("#video").attr("src", $videoSrc + joiner + "autoplay=1&modestbranding=1&rel=0");
+        });
+
+        $('#videoModal').on('hide.bs.modal', function () {
+            $("#video").attr("src", "");
+        });
     });
 
 

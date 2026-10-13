@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Portal;
 
 use App\Actions\ExportAuditReportAction;
 use App\Enums\AuditReport;
+use App\Enums\PortalPermission;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Portal\ExportAuditReportRequest;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class AuditReportController extends Controller
      */
     public function index(Request $request): View
     {
-        abort_unless($request->user()?->isAdministrator(), 403);
+        abort_unless($request->user()?->canOpenPortal(PortalPermission::Audit) ?? false, 403, PortalPermission::DENIED_MESSAGE);
 
         return view('portal.audit.index', [
             'user' => $request->user(),

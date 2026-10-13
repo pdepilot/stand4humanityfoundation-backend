@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Portal;
 
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Portal\AssignAdminRoleRequest;
 use App\Http\Requests\Portal\StoreAdminUserRequest;
+use App\Models\AdminRole;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,6 +23,7 @@ class AdminUserController extends Controller
         Gate::authorize('viewAny', User::class);
 
         $administrators = User::query()
+            ->with('adminRole')
             ->whereIn('role', [UserRole::SuperAdministrator, UserRole::Administrator])
             ->orderBy('name')
             ->get();
@@ -28,6 +31,7 @@ class AdminUserController extends Controller
         return view('portal.admins.index', [
             'user' => $request->user(),
             'administrators' => $administrators,
+            'roles' => AdminRole::query()->orderBy('name')->get(),
         ]);
     }
 
@@ -41,6 +45,20 @@ class AdminUserController extends Controller
         return redirect()
             ->route('portal.admins.index')
             ->with('status', 'The administrator was added.');
+    }
+
+    /**
+     * Assign or clear the role that limits an administrator's pages.
+     */
+    public function assignRole(AssignAdminRoleRequest $request, User $user): RedirectResponse
+    {
+        $user->update([
+            'admin_role_id' => $request->validated('admin_role_id'),
+        ]);
+
+        return redirect()
+            ->route('portal.admins.index')
+            ->with('status', 'The administrator role was updated.');
     }
 
     /**

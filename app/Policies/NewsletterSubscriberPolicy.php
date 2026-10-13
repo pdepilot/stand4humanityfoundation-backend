@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\NewsletterSubscriber;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class NewsletterSubscriberPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Subscribers);
     }
 
     /**
@@ -20,7 +21,7 @@ class NewsletterSubscriberPolicy
      */
     public function view(User $user, NewsletterSubscriber $newsletterSubscriber): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Subscribers);
     }
 
     /**
@@ -28,7 +29,7 @@ class NewsletterSubscriberPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Subscribers);
     }
 
     /**
@@ -36,7 +37,7 @@ class NewsletterSubscriberPolicy
      */
     public function update(User $user, NewsletterSubscriber $newsletterSubscriber): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Subscribers);
     }
 
     /**
@@ -44,6 +45,6 @@ class NewsletterSubscriberPolicy
      */
     public function delete(User $user, NewsletterSubscriber $newsletterSubscriber): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Subscribers);
     }
 }

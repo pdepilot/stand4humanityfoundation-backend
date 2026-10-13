@@ -5,7 +5,7 @@
                 <div class="team-detail pe-4">
                     <img class="img-fluid mb-4" src="{{ $teamMember->photoUrl() }}" alt="{{ $teamMember->name }}" loading="lazy">
                     <h3>{{ $teamMember->name }}</h3>
-                    <span>{{ $teamMember->role }}</span>
+                    <span class="team-position">{{ $teamMember->role }}</span>
                 </div>
                 @if ($teamMember->socialLinks() !== [])
                     <div class="team-social bg-light d-flex flex-column justify-content-center flex-shrink-0 p-4">

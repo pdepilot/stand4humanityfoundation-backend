@@ -28,7 +28,7 @@
                     <div>
                         <p class="eyebrow">Command · Admin settings</p>
                         <h1 class="head-title">Login details</h1>
-                        <p class="head-copy">Change the email and password used to enter the staff portal. Both can be updated here.</p>
+                        <p class="head-copy">Change the email and password used to enter the staff portal, and the phone number shown on the public site.</p>
                     </div>
                     <div class="settings-seal">
                         <img src="{{ asset('images/portal/stand-logo.png') }}" alt="Stand For Humanity Foundation">
@@ -39,7 +39,8 @@
                     </div>
                 </div>
             </header>
-            <main class="workspace settings-workspace">
+            <main class="workspace">
+                <div class="settings-workspace">
                 <aside class="surface settings-identity" data-stamp="Desk">
                     <div class="panel-title">
                         <div>
@@ -79,8 +80,8 @@
                         @csrf
                         @method('PUT')
 
-                        @if ($errors->any())
-                            <div class="settings-alert" role="alert">{{ $errors->first() }}</div>
+                        @if ($errors->hasAny(['email', 'current_password', 'password']))
+                            <div class="settings-alert" role="alert">{{ $errors->first('email') ?: $errors->first('current_password') ?: $errors->first('password') }}</div>
                         @endif
 
                         <div class="settings-field">
@@ -106,6 +107,36 @@
                         </div>
 
                         <button class="settings-submit" type="submit">Save login details</button>
+                    </form>
+                </div>
+                </div>
+
+                <div class="surface settings-card settings-phone" data-stamp="Phone">
+                    <div class="panel-title">
+                        <div>
+                            <h2>Public phone number</h2>
+                            <p>This number appears in the header, footer, and public pages</p>
+                        </div>
+                    </div>
+
+                    @if (session('phone_status'))
+                        <p class="settings-status" role="status">{{ session('phone_status') }}</p>
+                    @endif
+
+                    <form method="POST" action="{{ route('portal.settings.phone') }}" class="settings-form" novalidate>
+                        @csrf
+                        @method('PUT')
+
+                        @if ($errors->has('phone'))
+                            <div class="settings-alert" role="alert">{{ $errors->first('phone') }}</div>
+                        @endif
+
+                        <div class="settings-field">
+                            <label for="phone">Phone</label>
+                            <input id="phone" name="phone" type="text" value="{{ old('phone', $profile->phone) }}" required maxlength="40">
+                        </div>
+
+                        <button class="settings-submit" type="submit">Save phone number</button>
                     </form>
                 </div>
             </main>

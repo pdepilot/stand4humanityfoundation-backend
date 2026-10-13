@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Portal;
 
 use App\Enums\AuditReport;
+use App\Enums\PortalPermission;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -14,7 +15,7 @@ class ExportAuditReportRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->isAdministrator() ?? false;
+        return $this->user()?->canOpenPortal(PortalPermission::Audit) ?? false;
     }
 
     /**

@@ -4,10 +4,12 @@ use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonationPaymentController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncidentReportController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewsletterSubscriberController;
+use App\Http\Controllers\Portal\AdminRoleController;
 use App\Http\Controllers\Portal\AdminUserController;
 use App\Http\Controllers\Portal\AuditReportController;
 use App\Http\Controllers\Portal\AuthenticatedSessionController;
@@ -17,6 +19,7 @@ use App\Http\Controllers\Portal\DashboardController;
 use App\Http\Controllers\Portal\DonationGoalController;
 use App\Http\Controllers\Portal\DonorController;
 use App\Http\Controllers\Portal\EventController as PortalEventController;
+use App\Http\Controllers\Portal\GalleryItemController;
 use App\Http\Controllers\Portal\LoginBanController;
 use App\Http\Controllers\Portal\MailCenterController;
 use App\Http\Controllers\Portal\MeetingAttendanceController;
@@ -32,6 +35,7 @@ use App\Http\Controllers\Portal\VolunteerController;
 use App\Http\Controllers\TestimonyController;
 use App\Http\Controllers\VolunteerApplicationController;
 use App\Http\Middleware\EnsurePortalAccountIsActive;
+use App\Http\Middleware\EnsurePortalPermission;
 use App\Http\Middleware\ExpireIdlePortalSession;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +46,8 @@ Route::view('/services', 'site.services')->name('services');
 Route::view('/donations', 'site.donations')->name('donations');
 Route::view('/donate', 'site.donate')->name('donate');
 Route::get('/events', [EventController::class, 'index'])->name('events');
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
+Route::get('/gallery/{galleryItem}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::view('/volunteer', 'site.volunteer')->name('volunteer');
 Route::view('/our-stand', 'site.our-stand')->name('our-stand');
 Route::view('/report', 'site.report')->name('report');
@@ -121,7 +127,7 @@ Route::middleware('guest')->group(function () {
     Route::post('portal/login', [AuthenticatedSessionController::class, 'store'])->name('portal.login.store');
 });
 
-Route::middleware(['auth', EnsurePortalAccountIsActive::class, ExpireIdlePortalSession::class])->group(function () {
+Route::middleware(['auth', EnsurePortalAccountIsActive::class, ExpireIdlePortalSession::class, EnsurePortalPermission::class])->group(function () {
     Route::get('portal', DashboardController::class)->name('portal.dashboard');
     Route::put('portal/donation-goal', [DonationGoalController::class, 'update'])
         ->middleware('throttle:6,1')
@@ -158,8 +164,17 @@ Route::middleware(['auth', EnsurePortalAccountIsActive::class, ExpireIdlePortalS
     Route::get('portal/team', [TeamMemberController::class, 'index'])->name('portal.team.index');
     Route::get('portal/team/create', [TeamMemberController::class, 'create'])->name('portal.team.create');
     Route::post('portal/team', [TeamMemberController::class, 'store'])->name('portal.team.store');
+    Route::get('portal/team/{teamMember}/edit', [TeamMemberController::class, 'edit'])->name('portal.team.edit');
+    Route::put('portal/team/{teamMember}', [TeamMemberController::class, 'update'])->name('portal.team.update');
     Route::get('portal/team/{teamMember}', [TeamMemberController::class, 'show'])->name('portal.team.show');
     Route::delete('portal/team/{teamMember}', [TeamMemberController::class, 'destroy'])->name('portal.team.destroy');
+    Route::get('portal/gallery', [GalleryItemController::class, 'index'])->name('portal.gallery.index');
+    Route::get('portal/gallery/create', [GalleryItemController::class, 'create'])->name('portal.gallery.create');
+    Route::post('portal/gallery', [GalleryItemController::class, 'store'])->name('portal.gallery.store');
+    Route::get('portal/gallery/{galleryItem}/edit', [GalleryItemController::class, 'edit'])->name('portal.gallery.edit');
+    Route::get('portal/gallery/{galleryItem}', [GalleryItemController::class, 'show'])->name('portal.gallery.show');
+    Route::put('portal/gallery/{galleryItem}', [GalleryItemController::class, 'update'])->name('portal.gallery.update');
+    Route::delete('portal/gallery/{galleryItem}', [GalleryItemController::class, 'destroy'])->name('portal.gallery.destroy');
     Route::get('portal/testimonies', [PortalTestimonyController::class, 'index'])->name('portal.testimonies.index');
     Route::get('portal/testimonies/create', [PortalTestimonyController::class, 'create'])->name('portal.testimonies.create');
     Route::post('portal/testimonies', [PortalTestimonyController::class, 'store'])->name('portal.testimonies.store');
@@ -203,8 +218,14 @@ Route::middleware(['auth', EnsurePortalAccountIsActive::class, ExpireIdlePortalS
         ->name('portal.notifications.read');
     Route::get('portal/admins', [AdminUserController::class, 'index'])->name('portal.admins.index');
     Route::post('portal/admins', [AdminUserController::class, 'store'])->name('portal.admins.store');
+    Route::put('portal/admins/{user}/role', [AdminUserController::class, 'assignRole'])->name('portal.admins.role');
     Route::put('portal/admins/{user}', [AdminUserController::class, 'update'])->name('portal.admins.update');
     Route::delete('portal/admins/{user}', [AdminUserController::class, 'destroy'])->name('portal.admins.destroy');
+    Route::get('portal/roles', [AdminRoleController::class, 'index'])->name('portal.roles.index');
+    Route::post('portal/roles', [AdminRoleController::class, 'store'])->name('portal.roles.store');
+    Route::get('portal/roles/{adminRole}/edit', [AdminRoleController::class, 'edit'])->name('portal.roles.edit');
+    Route::put('portal/roles/{adminRole}', [AdminRoleController::class, 'update'])->name('portal.roles.update');
+    Route::delete('portal/roles/{adminRole}', [AdminRoleController::class, 'destroy'])->name('portal.roles.destroy');
     Route::get('portal/audit', [AuditReportController::class, 'index'])->name('portal.audit.index');
     Route::post('portal/audit', [AuditReportController::class, 'store'])->name('portal.audit.store');
     Route::get('portal/mail', [MailCenterController::class, 'index'])->name('portal.mail.index');
@@ -213,7 +234,9 @@ Route::middleware(['auth', EnsurePortalAccountIsActive::class, ExpireIdlePortalS
     Route::delete('portal/login-bans/{portalLoginBan}', [LoginBanController::class, 'destroy'])->name('portal.login-bans.destroy');
     Route::get('portal/site', [SiteProfileController::class, 'edit'])->name('portal.site.edit');
     Route::put('portal/site', [SiteProfileController::class, 'update'])->name('portal.site.update');
+    Route::put('portal/site/gallery', [SiteProfileController::class, 'updateGallery'])->name('portal.site.gallery');
     Route::get('portal/settings', [SettingsController::class, 'edit'])->name('portal.settings.edit');
+    Route::put('portal/settings/phone', [SettingsController::class, 'updatePhone'])->name('portal.settings.phone');
     Route::put('portal/settings', [SettingsController::class, 'update'])
         ->middleware('throttle:6,1')
         ->name('portal.settings.update');

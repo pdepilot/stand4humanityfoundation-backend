@@ -73,7 +73,7 @@
                         <div class="blog-article-body">
                             <p>Stand For Humanity Foundation (“we”, “us”) operates this website to share programme information and receive requests for help. This Privacy Policy explains what information we collect, why we collect it, and how we protect it.</p>
                             <h2>Who we are</h2>
-                            <p>We are a humanitarian foundation based in Owerri, Imo State, Nigeria. Contact: <a href="mailto:info@standforhumanityfoundation.org">info@standforhumanityfoundation.org</a> · +234 800 723 3248 · Owerri, Imo State, Nigeria.</p>
+                            <p>We are a humanitarian foundation based in Owerri, Imo State, Nigeria. Contact: <a href="mailto:info@standforhumanityfoundation.org">info@standforhumanityfoundation.org</a> · {{ $siteProfile->phone }} · Owerri, Imo State, Nigeria.</p>
                             <h2>Information we collect</h2>
                             <ul>
                                 <li>Contact details you submit through forms (name, email, phone, and your message).</li>
@@ -115,7 +115,7 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('Charitize/lib/wow/wow.min.js') }}"></script>
-    <script src="{{ asset('Charitize/js/main.js') }}?v=nav-more"></script>
+    <script src="{{ asset('Charitize/js/main.js') }}?v=impact-video"></script>
     <script src="{{ asset('Charitize/js/cookie-banner.js') }}" defer></script>
 </body>
 </html>

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\ContactMessage;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class ContactMessagePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Contacts);
     }
 
     /**
@@ -20,7 +21,7 @@ class ContactMessagePolicy
      */
     public function view(User $user, ContactMessage $contactMessage): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Contacts);
     }
 
     /**
@@ -28,7 +29,7 @@ class ContactMessagePolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Contacts);
     }
 
     /**
@@ -36,7 +37,7 @@ class ContactMessagePolicy
      */
     public function update(User $user, ContactMessage $contactMessage): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Contacts);
     }
 
     /**
@@ -44,6 +45,6 @@ class ContactMessagePolicy
      */
     public function delete(User $user, ContactMessage $contactMessage): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Contacts);
     }
 }

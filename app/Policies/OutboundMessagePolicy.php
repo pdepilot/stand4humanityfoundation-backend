@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\OutboundMessage;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class OutboundMessagePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Mail);
     }
 
     /**
@@ -20,7 +21,7 @@ class OutboundMessagePolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Mail);
     }
 
     /**
@@ -28,6 +29,6 @@ class OutboundMessagePolicy
      */
     public function view(User $user, OutboundMessage $outboundMessage): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Mail);
     }
 }

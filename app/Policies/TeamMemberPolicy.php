@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\TeamMember;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class TeamMemberPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Team);
     }
 
     /**
@@ -20,7 +21,7 @@ class TeamMemberPolicy
      */
     public function view(User $user, TeamMember $teamMember): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Team);
     }
 
     /**
@@ -28,7 +29,15 @@ class TeamMemberPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Team);
+    }
+
+    /**
+     * Determine whether the user can change a team member.
+     */
+    public function update(User $user, TeamMember $teamMember): bool
+    {
+        return $user->canOpenPortal(PortalPermission::Team);
     }
 
     /**
@@ -36,6 +45,6 @@ class TeamMemberPolicy
      */
     public function delete(User $user, TeamMember $teamMember): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Team);
     }
 }

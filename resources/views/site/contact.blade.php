@@ -111,6 +111,10 @@
                                     <strong>Report Live</strong>
                                     <span>File an urgent case now</span>
                                 </a>
+                                <a href="{{ route('gallery') }}" class="dropdown-item">
+                                    <strong>Gallery</strong>
+                                    <span>Photographs and videos from our work</span>
+                                </a>
                                 <a href="{{ route('help') }}" class="dropdown-item">
                                     <strong>Get Help</strong>
                                     <span>Reach the desk when you need us</span>
@@ -167,12 +171,8 @@
             <div class="row g-0">
                 <div class="col-lg-11">
                     <div class="h-100 py-5 d-flex align-items-center">
-                        <button type="button" class="btn-play" data-bs-toggle="modal"
-                            data-src="https://www.youtube.com/embed/DWRcNpR6Kdc" data-bs-target="#videoModal">
-                            <span></span>
-                        </button>
-                        <h3 class="ms-5 mb-0">Together, we defend human rights and keep communities safe.
-                        </h3>
+                        @include('site.partials.impact-video-button')
+                        <h3 class="ms-5 mb-0">{{ $siteProfile->impactVideoCaption() }}</h3>
                     </div>
                 </div>
                 <div class="d-none d-lg-block col-lg-1">
@@ -286,7 +286,7 @@
     <script src="{{ asset('Charitize/lib/counterup/counterup.min.js') }}"></script>
 
     <!-- Template Javascript -->
-    <script src="{{ asset('Charitize/js/main.js') }}?v=nav-more"></script>
+    <script src="{{ asset('Charitize/js/main.js') }}?v=impact-video"></script>
     <script src="{{ asset('Charitize/js/cookie-banner.js') }}" defer></script>
     <script src="{{ asset('Charitize/js/contact-capture.js') }}"></script>
 </body>

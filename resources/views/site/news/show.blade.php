@@ -106,6 +106,10 @@
                                     <strong>Report Live</strong>
                                     <span>File an urgent case now</span>
                                 </a>
+                                <a href="{{ route('gallery') }}" class="dropdown-item">
+                                    <strong>Gallery</strong>
+                                    <span>Photographs and videos from our work</span>
+                                </a>
                                 <a href="{{ route('help') }}" class="dropdown-item">
                                     <strong>Get Help</strong>
                                     <span>Reach the desk when you need us</span>
@@ -261,7 +265,7 @@
     <script src="{{ asset('Charitize/lib/waypoints/waypoints.min.js') }}"></script>
     <script src="{{ asset('Charitize/lib/owlcarousel/owl.carousel.min.js') }}"></script>
     <script src="{{ asset('Charitize/lib/counterup/counterup.min.js') }}"></script>
-    <script src="{{ asset('Charitize/js/main.js') }}?v=nav-more"></script>
+    <script src="{{ asset('Charitize/js/main.js') }}?v=impact-video"></script>
     <script src="{{ asset('Charitize/js/cookie-banner.js') }}" defer></script>
 </body>
 

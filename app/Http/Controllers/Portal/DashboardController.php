@@ -8,9 +8,11 @@ use App\Models\ContactMessage;
 use App\Models\Donation;
 use App\Models\FoundationEvent;
 use App\Models\FoundationMember;
+use App\Models\GalleryItem;
 use App\Models\IncidentReport;
 use App\Models\NewsArticle;
 use App\Models\NewsletterSubscriber;
+use App\Models\SiteProfile;
 use App\Models\TeamMember;
 use App\Models\Testimony;
 use App\Models\User;
@@ -37,9 +39,11 @@ class DashboardController extends Controller
             'eventCount' => FoundationEvent::query()->count(),
             'memberCount' => FoundationMember::query()->count(),
             'teamCount' => TeamMember::query()->count(),
+            'galleryCount' => GalleryItem::query()->count(),
             'testimonyCount' => Testimony::query()->where('status', TestimonyStatus::Pending)->count(),
             'subscriberCount' => NewsletterSubscriber::query()->count(),
             'donationProgress' => DonationProgress::current(),
+            'siteProfile' => SiteProfile::current(),
         ]);
     }
 }

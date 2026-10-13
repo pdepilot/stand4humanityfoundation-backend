@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\MeetingAttendance;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class MeetingAttendancePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Attendance);
     }
 
     /**
@@ -20,7 +21,7 @@ class MeetingAttendancePolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Attendance);
     }
 
     /**
@@ -28,6 +29,6 @@ class MeetingAttendancePolicy
      */
     public function view(User $user, MeetingAttendance $meetingAttendance): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Attendance);
     }
 }

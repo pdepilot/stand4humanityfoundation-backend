@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Models\PortalLoginBan;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class PortalLoginBanPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Bans);
     }
 
     /**
@@ -20,6 +21,6 @@ class PortalLoginBanPolicy
      */
     public function delete(User $user, PortalLoginBan $portalLoginBan): bool
     {
-        return $user->isAdministrator();
+        return $user->canOpenPortal(PortalPermission::Bans);
     }
 }

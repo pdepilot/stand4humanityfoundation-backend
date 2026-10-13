@@ -42,6 +42,7 @@
                                 <h2>Portrait</h2>
                                 <p>Shown on the public site</p>
                             </div>
+                            <a class="ghost-btn" href="{{ route('portal.team.edit', $teamMember) }}">Edit</a>
                             <a class="ghost-btn" href="{{ route('portal.team.index') }}">Back to the team</a>
                         </div>
 
@@ -78,7 +79,7 @@
                                 <dd>{{ $teamMember->name }}</dd>
                             </div>
                             <div>
-                                <dt>Role</dt>
+                                <dt>Position</dt>
                                 <dd>{{ $teamMember->role }}</dd>
                             </div>
                             @foreach ($teamMember->socialLinks() as $link)

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PortalPermission;
 use App\Enums\UserRole;
 use App\Models\User;
 
@@ -12,7 +13,15 @@ class UserPolicy
      */
     public function updateLoginDetails(User $actor, User $user): bool
     {
-        return $actor->isAdministrator() && $actor->is($user);
+        return $actor->canOpenPortal(PortalPermission::Settings) && $actor->is($user);
+    }
+
+    /**
+     * Determine whether the actor may assign a role to an administrator.
+     */
+    public function assignRole(User $actor, User $user): bool
+    {
+        return $this->suspend($actor, $user);
     }
 
     /**

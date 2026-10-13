@@ -18,6 +18,7 @@ class PublicPagesTest extends TestCase
     #[TestWith(['privacy', 'Privacy Policy | Stand For Humanity Foundation'])]
     #[TestWith(['terms', 'Terms of Use | Stand For Humanity Foundation'])]
     #[TestWith(['events', 'Events | Stand For Humanity Foundation'])]
+    #[TestWith(['gallery', 'Gallery | Stand For Humanity Foundation'])]
     #[TestWith(['volunteer', 'Volunteer & Leadership | Stand For Humanity Foundation'])]
     #[TestWith(['our-stand', 'Our Stand | Stand For Humanity Foundation'])]
     #[TestWith(['report', 'Report Incident | Stand For Humanity Foundation'])]

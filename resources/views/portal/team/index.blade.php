@@ -61,7 +61,7 @@
                                 <div>
                                     <span>Quiet roster</span>
                                     <strong>No one is on the public team yet.</strong>
-                                    <span>Add a name, a role, and a portrait.</span>
+                                    <span>Add a name, a position, and a portrait.</span>
                                 </div>
                             </div>
                         @else
@@ -75,6 +75,7 @@
                                             <strong>{{ $teamMember->name }}</strong>
                                             <span>{{ $teamMember->role }}</span>
                                         </a>
+                                        <a class="ghost-btn" href="{{ route('portal.team.edit', $teamMember) }}">Edit</a>
                                         <form method="POST" action="{{ route('portal.team.destroy', $teamMember) }}" onsubmit="return confirm('Remove this person from the team?');">
                                             @csrf
                                             @method('DELETE')
