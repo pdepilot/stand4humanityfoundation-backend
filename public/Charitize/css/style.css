@@ -1378,6 +1378,15 @@ body > .container-fluid.bg-secondary.px-0 {
     letter-spacing: 2px;
 }
 
+.team-item .team-detail img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.team-item .team-social {
+    background: transparent;
+}
+
 
 
 /*** Testimonial ***/
